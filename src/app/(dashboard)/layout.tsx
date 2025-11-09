@@ -140,16 +140,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
              {/* Can add breadcrumbs or page title here later */}
           </div>
           <div className='flex items-center gap-4'>
-            {user?.role === 'teacher' && (
-                <Button asChild>
-                    <Link href="/create-question">Create Question</Link>
-                </Button>
-            )}
-            {user?.role === 'student' && (
-                <Button asChild>
-                    <Link href="/submit-answer">Submit Answer</Link>
-                </Button>
-            )}
+             {/* The user switcher and role-based sidebar links handle primary actions now. */}
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6 lg:p-8">
@@ -175,3 +166,5 @@ export default function DashboardLayout({
     </UserProvider>
   );
 }
+
+    

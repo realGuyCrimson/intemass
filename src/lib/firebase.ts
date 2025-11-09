@@ -20,6 +20,7 @@ import {
   type DocumentData,
   type Firestore,
   type Query,
+  type CollectionReference,
 } from 'firebase/firestore';
 
 import { initializeFirebase } from '@/firebase';
@@ -134,3 +135,5 @@ export const getResultForAnswer = (studentAnswerId: string) =>
 
 
 export { firestore };
+
+    

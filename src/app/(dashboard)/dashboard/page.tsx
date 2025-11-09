@@ -1,5 +1,7 @@
+
 'use client';
 
+import Link from 'next/link';
 import {
   Activity,
   ArrowUpRight,
@@ -86,11 +88,23 @@ const recentSubmissions = [
 export default function DashboardPage() {
   return (
     <>
-      <PageHeader
-        title="Dashboard"
-        description="Welcome back, Dr. Reed. Here's a summary of your class performance."
-      />
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+      <div className="text-center">
+         <PageHeader
+            title="Automated Essay Grading in 30 Seconds"
+            description="INTEMASS AI leverages cutting-edge semantic analysis to provide fast, consistent, and insightful feedback on written work."
+            className="items-center"
+        />
+        <div className="flex justify-center gap-4">
+            <Button asChild size="lg">
+                <Link href="/create-question">I'm a Teacher - Create Question</Link>
+            </Button>
+            <Button asChild size="lg" variant="secondary">
+                <Link href="/submit-answer">I'm a Student - Submit Answer</Link>
+            </Button>
+        </div>
+      </div>
+      
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mt-12">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -122,14 +136,14 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Essays Pending
+              Avg. Grading Time
             </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">~45s</div>
             <p className="text-xs text-muted-foreground">
-              -5 since last hour
+              vs. 15-20 mins manually
             </p>
           </CardContent>
         </Card>
@@ -227,3 +241,5 @@ export default function DashboardPage() {
     </>
   );
 }
+
+    
