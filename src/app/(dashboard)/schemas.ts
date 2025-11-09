@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { AiPoweredEssayScoringOutput } from '@/ai/flows/ai-powered-essay-scoring';
 import type { AutomatedFeedbackOutput } from '@/ai/flows/automated-feedback-generation';
 import type { AnalyzeDiagramOutput } from '@/ai/flows/canvas-diagram-analysis';
+import type { OcrFromImageOutput } from '@/ai/flows/ocr-flow';
 
 export const essayScoringSchema = z.object({
   essayText: z.string().min(50, 'Essay text must be at least 50 characters.'),
@@ -15,17 +16,32 @@ export const feedbackSchema = z.object({
 });
 
 export const diagramSchema = z.object({
-  diagramDataUri: z.string().startsWith('data:image', 'Invalid image data. Please upload a valid image.'),
+  diagramDataUri: z
+    .string()
+    .startsWith('data:image', 'Invalid image data. Please upload a valid image.'),
   expectedComponents: z.string().min(3, 'Expected components are required.'),
+});
+
+export const ocrSchema = z.object({
+  imageDataUri: z
+    .string()
+    .startsWith('data:image', 'Invalid image data. Please upload a valid image.'),
 });
 
 // Schema for Step 1 of the Create Question form
 export const createQuestionStep1Schema = z.object({
-    title: z.string().min(10, 'Question title must be at least 10 characters.'),
-    subject: z.string().min(1, 'Please select a subject.'),
-    curriculum: z.string().min(1, 'Please select a curriculum.'),
-    maxPoints: z.coerce.number().min(1, 'Max points must be at least 1.').max(100, 'Max points cannot exceed 100.'),
-    questionText: z.string().min(20, 'Full question text must be at least 20 characters.'),
+  title: z
+    .string()
+    .min(10, 'Question title must be at least 10 characters.'),
+  subject: z.string().min(1, 'Please select a subject.'),
+  curriculum: z.string().min(1, 'Please select a curriculum.'),
+  maxPoints: z.coerce
+    .number()
+    .min(1, 'Max points must be at least 1.')
+    .max(100, 'Max points cannot exceed 100.'),
+  questionText: z
+    .string()
+    .min(20, 'Full question text must be at least 20 characters.'),
 });
 
 export type CreateQuestionStep1 = z.infer<typeof createQuestionStep1Schema>;
@@ -46,4 +62,10 @@ export type DiagramState = {
   status: 'idle' | 'loading' | 'success' | 'error';
   message: string;
   data?: AnalyzeDiagramOutput;
+};
+
+export type OcrState = {
+  status: 'idle' | 'loading' | 'success' | 'error';
+  message: string;
+  data?: OcrFromImageOutput;
 };
