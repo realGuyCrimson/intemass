@@ -30,11 +30,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { IntomassIcon } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { UserProvider, useUser } from '@/hooks/use-user';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { USERS } from '@/lib/users';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/create-question', label: 'Create Question', icon: PlusCircle },
-  { href: '/submit-answer', label: 'Submit Answer', icon: FileQuestion },
+  { href: '/create-question', label: 'Create Question', icon: PlusCircle, role: 'teacher' },
+  { href: '/submit-answer', label: 'Submit Answer', icon: FileQuestion, role: 'student' },
   { href: '/results', label: 'View Results', icon: View },
   { href: '/essay-scoring', label: 'Essay Scoring', icon: BookMarked },
   { href: '/feedback', label: 'AI Feedback', icon: BotMessageSquare },
@@ -42,12 +45,63 @@ const navItems = [
   { href: '/ocr', label: 'OCR Submission', icon: ScanText },
 ];
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function UserSwitcher() {
+    const { user, setUser } = useUser();
+
+    if (!user) return null;
+
+    const handleUserChange = (userId: string) => {
+        const selectedUser = USERS.find(u => u.id === userId);
+        if (selectedUser) {
+            setUser(selectedUser);
+        }
+    };
+
+    return (
+        <div className="flex items-center gap-3 p-2">
+            <Avatar className="size-9">
+              <AvatarImage
+                src={user.avatarUrl}
+                alt={`${user.name} avatar`}
+                data-ai-hint="person face"
+              />
+              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="hidden flex-col group-data-[state=expanded]:flex">
+                <Select value={user.id} onValueChange={handleUserChange}>
+                    <SelectTrigger className="w-[180px] border-none !bg-transparent text-sm font-semibold text-sidebar-foreground ring-offset-sidebar-background focus:ring-sidebar-ring">
+                        <SelectValue placeholder="Select user" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {USERS.map(u => (
+                            <SelectItem key={u.id} value={u.id}>
+                                <div className="flex items-center gap-2">
+                                    <Avatar className="size-6">
+                                        <AvatarImage src={u.avatarUrl} alt={u.name} />
+                                        <AvatarFallback>{u.name.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                    <span>{u.name} ({u.role})</span>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                 <span className="text-xs text-sidebar-foreground/70 -mt-1 ml-3">
+                    {user.email}
+                </span>
+            </div>
+          </div>
+    )
+}
+
+function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user } = useUser();
+
+  const filteredNavItems = navItems.filter(item => {
+    if (!item.role) return true;
+    return item.role === user?.role;
+  });
 
   return (
     <SidebarProvider>
@@ -60,9 +114,9 @@ export default function DashboardLayout({
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            {navItems.map((item) => (
+            {filteredNavItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href} passHref>
+                <Link href={item.href}>
                   <SidebarMenuButton
                     isActive={pathname === item.href}
                     tooltip={item.label}
@@ -76,24 +130,7 @@ export default function DashboardLayout({
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-          <div className="flex items-center gap-3 p-2">
-            <Avatar className="size-9">
-              <AvatarImage
-                src="https://picsum.photos/seed/teacher/100/100"
-                alt="Teacher avatar"
-                data-ai-hint="person face"
-              />
-              <AvatarFallback>T</AvatarFallback>
-            </Avatar>
-            <div className="hidden flex-col group-data-[state=expanded]:flex">
-              <span className="text-sm font-semibold text-sidebar-foreground">
-                Dr. Evelyn Reed
-              </span>
-              <span className="text-xs text-sidebar-foreground/70">
-                e.reed@cambridge.edu
-              </span>
-            </div>
-          </div>
+          <UserSwitcher />
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -103,10 +140,16 @@ export default function DashboardLayout({
              {/* Can add breadcrumbs or page title here later */}
           </div>
           <div className='flex items-center gap-4'>
-            <Button asChild>
-                <Link href="/create-question">Create Question</Link>
-            </Button>
-             {/* User menu or other actions */}
+            {user?.role === 'teacher' && (
+                <Button asChild>
+                    <Link href="/create-question">Create Question</Link>
+                </Button>
+            )}
+            {user?.role === 'student' && (
+                <Button asChild>
+                    <Link href="/submit-answer">Submit Answer</Link>
+                </Button>
+            )}
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6 lg:p-8">
@@ -117,5 +160,18 @@ export default function DashboardLayout({
         </footer>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <UserProvider>
+        <AppLayout>{children}</AppLayout>
+    </UserProvider>
   );
 }
