@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { LoaderCircle, Sparkles, ThumbsDown, ThumbsUp, Lightbulb } from 'lucide-react';
 
-import { generateFeedbackAction, type FeedbackState } from '@/app/(dashboard)/actions';
+import { generateFeedbackAction } from '@/app/(dashboard)/actions';
+import { type FeedbackState } from '@/app/(dashboard)/schemas';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';

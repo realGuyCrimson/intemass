@@ -5,7 +5,8 @@ import { useFormState, useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { ClipboardCheck, Image as ImageIcon, LoaderCircle, Percent, Sparkles } from 'lucide-react';
 
-import { analyzeDiagramAction, type DiagramState } from '@/app/(dashboard)/actions';
+import { analyzeDiagramAction } from '@/app/(dashboard)/actions';
+import { type DiagramState } from '@/app/(dashboard)/schemas';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';

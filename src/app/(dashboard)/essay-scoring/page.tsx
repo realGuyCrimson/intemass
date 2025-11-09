@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { BotMessageSquare, LoaderCircle, Sparkles, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 
-import { scoreEssayAction, type EssayScoringState } from '@/app/(dashboard)/actions';
+import { scoreEssayAction } from '@/app/(dashboard)/actions';
+import { type EssayScoringState } from '@/app/(dashboard)/schemas';
 import { PageHeader } from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
