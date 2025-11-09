@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect, useState, useTransition } from 'react';
 import Image from 'next/image';
 import { Copy, FileUp, LoaderCircle } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
@@ -27,14 +27,15 @@ const initialState: OcrState = {
 
 export default function OcrPage() {
   const [state, formAction] = useActionState(ocrAction, initialState);
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   
   const [preview, setPreview] = useState<string | null>(null);
   const [dataUri, setDataUri] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  
+  const isProcessing = isPending;
 
   useEffect(() => {
-    setIsProcessing(false);
     if (state.status === 'error') {
       toast({
         variant: 'destructive',
@@ -53,17 +54,17 @@ export default function OcrPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsProcessing(true);
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
         setPreview(result);
         setDataUri(result);
         
-        // Automatically submit the form once the file is ready
-        const formData = new FormData();
-        formData.append('imageDataUri', result);
-        formAction(formData);
+        startTransition(() => {
+          const formData = new FormData();
+          formData.append('imageDataUri', result);
+          formAction(formData);
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -87,7 +88,7 @@ export default function OcrPage() {
         title="OCR for Handwritten Submissions"
         description="Upload an image of a handwritten or scanned essay. The system will use Optical Character Recognition (OCR) to extract the text, making it ready for AI analysis."
       />
-      <form action={formAction}>
+      <form>
         <input type="hidden" name="imageDataUri" value={dataUri} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card>
