@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useRef, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { BotMessageSquare, LoaderCircle, Sparkles, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 
 import { scoreEssayAction } from '@/app/(dashboard)/actions';
@@ -38,7 +38,7 @@ function SubmitButton() {
 }
 
 export default function EssayScoringPage() {
-  const [state, formAction] = useFormState(scoreEssayAction, initialState);
+  const [state, formAction] = useActionState(scoreEssayAction, initialState);
   const { toast } = useToast();
   const resultsRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);

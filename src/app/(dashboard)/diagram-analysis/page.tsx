@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, type FC } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useRef, useState, type FC, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { ClipboardCheck, Image as ImageIcon, LoaderCircle, Percent, Sparkles } from 'lucide-react';
 
@@ -40,7 +40,7 @@ function SubmitButton() {
 }
 
 const DiagramAnalysisPage: FC = () => {
-  const [state, formAction] = useFormState(analyzeDiagramAction, initialState);
+  const [state, formAction] = useActionState(analyzeDiagramAction, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   
@@ -96,7 +96,7 @@ const DiagramAnalysisPage: FC = () => {
                 </div>
                  {preview && (
                     <div className="mt-4 relative aspect-video w-full rounded-md border-2 border-dashed flex items-center justify-center overflow-hidden">
-                        <Image src={preview} alt="Diagram preview" layout="fill" objectFit="contain" />
+                        <Image src={preview} alt="Diagram preview" fill objectFit="contain" />
                     </div>
                 )}
             </CardContent>

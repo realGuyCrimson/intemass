@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useRef, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { LoaderCircle, Sparkles, ThumbsDown, ThumbsUp, Lightbulb } from 'lucide-react';
 
 import { generateFeedbackAction } from '@/app/(dashboard)/actions';
@@ -37,7 +37,7 @@ function SubmitButton() {
 }
 
 export default function FeedbackPage() {
-  const [state, formAction] = useFormState(generateFeedbackAction, initialState);
+  const [state, formAction] = useActionState(generateFeedbackAction, initialState);
   const { toast } = useToast();
   const resultsRef = useRef<HTMLDivElement>(null);
 
