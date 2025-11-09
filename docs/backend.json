@@ -1,259 +1,182 @@
 {
   "entities": {
-    "Essay": {
+    "Question": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Essay",
+      "title": "Question",
       "type": "object",
-      "description": "Represents a student's essay submission.",
+      "description": "Represents a question created by a teacher.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the essay submission."
-        },
-        "studentId": {
-          "type": "string",
-          "description": "Reference to Student. (Relationship: Student 1:N Essay)"
-        },
-        "assignmentId": {
-          "type": "string",
-          "description": "Reference to Assignment. (Relationship: Assignment 1:N Essay)"
-        },
-        "submissionDate": {
-          "type": "string",
-          "description": "Date and time the essay was submitted.",
-          "format": "date-time"
-        },
-        "text": {
-          "type": "string",
-          "description": "The full text content of the essay."
-        },
-        "ocrText": {
-          "type": "string",
-          "description": "The OCR extracted text from handwritten or scanned essay (if applicable)."
-        },
-        "score": {
-          "type": "number",
-          "description": "The score the student achieved on the essay."
-        },
-        "feedback": {
-          "type": "string",
-          "description": "AI generated feedback for the essay."
-        }
+        "id": { "type": "string", "description": "Unique identifier for the question." },
+        "title": { "type": "string", "description": "The question text or prompt." },
+        "subject": { "type": "string", "description": "The subject area of the question." },
+        "curriculum": { "type": "string", "description": "The curriculum the question belongs to." },
+        "maxPoints": { "type": "number", "description": "The total possible score for the question." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the question was created." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the question was last updated." }
       },
-      "required": [
-        "id",
-        "studentId",
-        "assignmentId",
-        "submissionDate",
-        "text"
-      ]
+      "required": ["id", "title", "subject", "curriculum", "maxPoints", "createdAt", "updatedAt"]
     },
-    "Assignment": {
+    "StandardAnswer": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Assignment",
+      "title": "Standard Answer",
       "type": "object",
-      "description": "Represents an assignment that students must complete.",
+      "description": "Represents the ideal or standard answer for a question.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the assignment."
+        "id": { "type": "string", "description": "Unique identifier for the standard answer." },
+        "questionId": { "type": "string", "description": "Foreign key to the Question." },
+        "fullText": { "type": "string", "description": "The complete text of the standard answer." },
+        "sentenceList": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pointNumber": { "type": "string" },
+              "text": { "type": "string" },
+              "keywords": { "type": "array", "items": { "type": "string" } },
+              "weight": { "type": "number" },
+              "requiredTerms": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["pointNumber", "text", "keywords", "weight", "requiredTerms"]
+          }
         },
-        "teacherId": {
-          "type": "string",
-          "description": "Reference to Teacher. (Relationship: Teacher 1:N Assignment)"
-        },
-        "title": {
-          "type": "string",
-          "description": "The title of the assignment."
-        },
-        "description": {
-          "type": "string",
-          "description": "A description of the assignment."
-        },
-        "dueDate": {
-          "type": "string",
-          "description": "The date and time the assignment is due.",
-          "format": "date-time"
-        },
-        "maxScore": {
-          "type": "number",
-          "description": "The maximum possible score for the assignment."
-        },
-        "assignmentType": {
-          "type": "string",
-          "description": "Specifies whether the assignment is a Canvas/drawing, Paper-based, or MCQ assignment."
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "conceptMap": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "concept": { "type": "string" },
+              "weight": { "type": "number" }
+            },
+            "required": ["concept", "weight"]
+          }
         }
       },
-      "required": [
-        "id",
-        "teacherId",
-        "title",
-        "description",
-        "dueDate",
-        "maxScore",
-        "assignmentType"
-      ]
+      "required": ["id", "questionId", "fullText", "sentenceList", "keywords", "conceptMap"]
     },
-    "Student": {
+    "MarkingScheme": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Student",
+      "title": "Marking Scheme",
       "type": "object",
-      "description": "Represents a student user.",
+      "description": "Defines the marking scheme and rules for grading a question.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the student."
+        "id": { "type": "string", "description": "Unique identifier for the marking scheme." },
+        "questionId": { "type": "string", "description": "Foreign key to the Question." },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ruleId": { "type": "string" },
+              "condition": { "type": "string" },
+              "points": { "type": "array", "items": { "type": "string" } },
+              "marksAwarded": { "type": "number" },
+              "description": { "type": "string" }
+            },
+            "required": ["ruleId", "condition", "points", "marksAwarded", "description"]
+          }
         },
-        "name": {
-          "type": "string",
-          "description": "The student's full name."
-        },
-        "email": {
-          "type": "string",
-          "description": "The student's email address.",
-          "format": "email"
-        },
-        "gradeLevel": {
-          "type": "number",
-          "description": "The student's grade level."
-        }
+        "totalMarks": { "type": "number" },
+        "passingThreshold": { "type": "number" }
       },
-      "required": [
-        "id",
-        "name",
-        "email",
-        "gradeLevel"
-      ]
+      "required": ["id", "questionId", "rules", "totalMarks", "passingThreshold"]
     },
-    "Teacher": {
+    "StudentAnswer": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Teacher",
+      "title": "Student Answer",
       "type": "object",
-      "description": "Represents a teacher user.",
+      "description": "Represents a student's submitted answer to a question.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the teacher."
-        },
-        "name": {
-          "type": "string",
-          "description": "The teacher's full name."
-        },
-        "email": {
-          "type": "string",
-          "description": "The teacher's email address.",
-          "format": "email"
-        },
-        "subject": {
-          "type": "string",
-          "description": "The subject the teacher teaches."
-        }
+        "id": { "type": "string", "description": "Unique identifier for the student's answer." },
+        "questionId": { "type": "string", "description": "Foreign key to the Question." },
+        "studentName": { "type": "string", "description": "The name of the student." },
+        "answerText": { "type": "string", "description": "The text of the student's submitted essay." },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the answer was submitted." },
+        "processingStatus": { "type": "string", "enum": ["pending", "processing", "completed", "error"] }
       },
-      "required": [
-        "id",
-        "name",
-        "email",
-        "subject"
-      ]
+      "required": ["id", "questionId", "studentName", "answerText", "submittedAt", "processingStatus"]
+    },
+    "GradingResult": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Grading Result",
+      "type": "object",
+      "description": "Stores the complete result of a grading operation.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the grading result." },
+        "studentAnswerId": { "type": "string", "description": "Foreign key to the StudentAnswer." },
+        "totalScore": { "type": "number" },
+        "maxScore": { "type": "number" },
+        "percentage": { "type": "number" },
+        "matchedPoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pointNumber": { "type": "string" },
+              "standardText": { "type": "string" },
+              "studentText": { "type": "string" },
+              "similarityScore": { "type": "number" },
+              "matchType": { "type": "string", "enum": ["exact", "high", "partial", "weak"] },
+              "marksAwarded": { "type": "number" },
+              "feedback": { "type": "string" }
+            },
+            "required": ["pointNumber", "standardText", "studentText", "similarityScore", "matchType", "marksAwarded", "feedback"]
+          }
+        },
+        "missedPoints": { "type": "array", "items": { "type": "string" } },
+        "overallFeedback": { "type": "string" },
+        "processingTime": { "type": "number", "description": "milliseconds" },
+        "gradedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "studentAnswerId", "totalScore", "maxScore", "percentage", "matchedPoints", "missedPoints", "overallFeedback", "processingTime", "gradedAt"]
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["anonymous"]
   },
   "firestore": {
     "structure": [
       {
-        "path": "/students/{studentId}",
+        "path": "/questions/{questionId}",
         "definition": {
-          "entityName": "Student",
-          "schema": {
-            "$ref": "#/backend/entities/Student"
-          },
-          "description": "Stores student profiles. Parameters: studentId.",
-          "params": [
-            {
-              "name": "studentId",
-              "description": "The unique identifier of the student."
-            }
-          ]
+          "entityName": "Question",
+          "schema": { "$ref": "#/backend/entities/Question" },
+          "description": "Stores all questions created by teachers."
         }
       },
       {
-        "path": "/teachers/{teacherId}",
+        "path": "/standardAnswers/{standardAnswerId}",
         "definition": {
-          "entityName": "Teacher",
-          "schema": {
-            "$ref": "#/backend/entities/Teacher"
-          },
-          "description": "Stores teacher profiles. Parameters: teacherId.",
-          "params": [
-            {
-              "name": "teacherId",
-              "description": "The unique identifier of the teacher."
-            }
-          ]
+          "entityName": "StandardAnswer",
+          "schema": { "$ref": "#/backend/entities/StandardAnswer" },
+          "description": "Stores standard/ideal answers with point breakdown."
         }
       },
       {
-        "path": "/assignments/{assignmentId}",
+        "path": "/markingSchemes/{markingSchemeId}",
         "definition": {
-          "entityName": "Assignment",
-          "schema": {
-            "$ref": "#/backend/entities/Assignment"
-          },
-          "description": "Stores assignment details. Parameters: assignmentId.",
-          "params": [
-            {
-              "name": "assignmentId",
-              "description": "The unique identifier of the assignment."
-            }
-          ]
+          "entityName": "MarkingScheme",
+          "schema": { "$ref": "#/backend/entities/MarkingScheme" },
+          "description": "Stores grading rules and marking criteria."
         }
       },
       {
-        "path": "/students/{studentId}/essays/{essayId}",
+        "path": "/studentAnswers/{studentAnswerId}",
         "definition": {
-          "entityName": "Essay",
-          "schema": {
-            "$ref": "#/backend/entities/Essay"
-          },
-          "description": "Stores essays submitted by students, nested under the student's profile. Includes denormalized 'studentId' and 'assignmentId' for querying. Parameters: studentId, essayId.",
-          "params": [
-            {
-              "name": "studentId",
-              "description": "The unique identifier of the student."
-            },
-            {
-              "name": "essayId",
-              "description": "The unique identifier of the essay."
-            }
-          ]
+          "entityName": "StudentAnswer",
+          "schema": { "$ref": "#/backend/entities/StudentAnswer" },
+          "description": "Stores student submissions."
         }
       },
       {
-        "path": "/assignments/{assignmentId}/essays/{essayId}",
+        "path": "/gradingResults/{gradingResultId}",
         "definition": {
-          "entityName": "Essay",
-          "schema": {
-            "$ref": "#/backend/entities/Essay"
-          },
-          "description": "Stores essays submitted for each assignment, nested under the assignment. Includes denormalized 'studentId' and 'assignmentId' for querying. Parameters: assignmentId, essayId.",
-          "params": [
-            {
-              "name": "assignmentId",
-              "description": "The unique identifier of the assignment."
-            },
-            {
-              "name": "essayId",
-              "description": "The unique identifier of the essay."
-            }
-          ]
+          "entityName": "GradingResult",
+          "schema": { "$ref": "#/backend/entities/GradingResult" },
+          "description": "Stores grading results and feedback."
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to support the INTEMASS Automated Essay Grading System. The structure prioritizes Authorization Independence and QAPs by leveraging denormalization and structural segregation. Given that authentication is not required, all data will be accessible to any user, making granular permission rules unnecessary. However, if authentication is implemented later, the structure is designed to easily incorporate security rules.\n\n1.  **Authorization Independence:**  Since we're operating without authentication, authorization independence isn't strictly enforced through rules. However, the design anticipates future security needs by structuring data in a way that minimizes the need for `get()` calls in security rules. For instance, placing Essays under a Student and Assignment ensures that, with authentication, we could easily control access based on user roles and relationships.\n\n2.  **Structural Segregation:** Collections are separated based on entity type (Students, Teachers, Assignments, Essays) to maintain a homogeneous security posture. This makes it easier to apply consistent rules across all documents within a collection.\n\n3.  **QAPs:** Since authentication isn't required `list` operations won't be restricted. In a future secured implementation, we'd ensure students can only list their own essays and teachers can list assignments they created. The chosen structure supports this by organizing essays under students ( `/students/{studentId}/essays/{essayId}` ). Teachers would have similar restrictions when listing assignments.\n\n4.  **Hierarchical Paths for User-Owned Data:** Essays are stored as subcollections of Students and Assignments ( `/students/{studentId}/essays/{essayId}` and `/assignments/{assignmentId}/essays/{essayId}` ). This facilitates querying essays associated with a specific student or assignment and enables easy management of ownership and access rights if the system is secured in the future.\n\n5. **Invariants:** The structure is designed to maintain data integrity. For example, the `studentId` and `assignmentId` within the `Essay` document act as foreign keys, helping maintain relationships between entities."
+    "reasoning": "The Firestore data structure is designed to support the INTEMASS Automated Essay Grading System. The structure uses separate top-level collections for each core entity (Questions, StandardAnswers, etc.). This approach is simple and effective for a prototype, allowing for easy querying of each data type. Since there is no authentication, all data is publicly accessible, and the security rules reflect this open-access policy. This flat structure avoids complex nested queries and is well-suited for the initial development phases."
   }
 }
