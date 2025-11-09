@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -8,6 +9,9 @@ import {
   ClipboardCheck,
   LayoutDashboard,
   ScanText,
+  PlusCircle,
+  FileQuestion,
+  View,
 } from 'lucide-react';
 
 import {
@@ -25,9 +29,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { IntomassIcon } from '@/components/icons';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/create-question', label: 'Create Question', icon: PlusCircle },
+  { href: '/submit-answer', label: 'Submit Answer', icon: FileQuestion },
+  { href: '/results', label: 'View Results', icon: View },
   { href: '/essay-scoring', label: 'Essay Scoring', icon: BookMarked },
   { href: '/feedback', label: 'AI Feedback', icon: BotMessageSquare },
   { href: '/diagram-analysis', label: 'Diagram Analysis', icon: ClipboardCheck },
@@ -89,18 +97,24 @@ export default function DashboardLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 items-center border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
           <SidebarTrigger className="md:hidden" />
           <div className="flex-1">
              {/* Can add breadcrumbs or page title here later */}
           </div>
-          <div>
-            {/* User menu or other actions */}
+          <div className='flex items-center gap-4'>
+            <Button asChild>
+                <Link href="/create-question">Create Question</Link>
+            </Button>
+             {/* User menu or other actions */}
           </div>
         </header>
         <main className="flex-1 p-4 md:p-6 lg:p-8">
             {children}
         </main>
+        <footer className="p-4 text-center text-sm text-muted-foreground">
+            Powered by Gemini AI
+        </footer>
       </SidebarInset>
     </SidebarProvider>
   );
