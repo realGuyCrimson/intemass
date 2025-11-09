@@ -1,0 +1,94 @@
+/**
+ * @fileOverview Firestore Security Rules for the INTEMASS Automated Essay Grading System.
+ *
+ * Core Philosophy:
+ * This ruleset is for the prototyping phase, and due to the lack of authentication, all data is publicly accessible. This means that both reads and writes are open to anyone.
+ * In the event that authentication is implemented later, the data structure has been created with Authorization Independence, Structural Segregation, and QAPs in mind for easy implementation.
+ *
+ * Data Structure:
+ * - /students/{studentId}: Stores student profiles.
+ * - /teachers/{teacherId}: Stores teacher profiles.
+ * - /assignments/{assignmentId}: Stores assignment details.
+ * - /students/{studentId}/essays/{essayId}: Stores essays submitted by students.
+ * - /assignments/{assignmentId}/essays/{essayId}: Stores essays submitted for each assignment.
+ *
+ * Key Security Decisions:
+ * - All data is currently public due to the prototyping phase.
+ * - No data shape validation is performed beyond what is necessary for path consistency in a future secured implementation.
+ *
+ * Denormalization for Authorization:
+ * - The 'Essay' documents under both '/students/{studentId}/essays/{essayId}' and '/assignments/{assignmentId}/essays/{essayId}' include denormalized 'studentId' and 'assignmentId' to support future authorization rules based on ownership.
+ *
+ * Structural Segregation:
+ * - Collections are separated by entity type (Students, Teachers, Assignments, Essays) to maintain a consistent security posture.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows anyone to read or write student profiles during the prototyping phase.
+     * @path /students/{studentId}
+     * @allow (get, list) Any user can read student profile data.
+     * @allow (create, update, delete) Any user can create, update, or delete student profile data.
+     * @deny (none) No requests are denied during prototyping.
+     * @principle Open access for prototyping.
+     */
+    match /students/{studentId} {
+      allow get, list: if true;
+      allow create, update, delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read or write teacher profiles during the prototyping phase.
+     * @path /teachers/{teacherId}
+     * @allow (get, list) Any user can read teacher profile data.
+     * @allow (create, update, delete) Any user can create, update, or delete teacher profile data.
+     * @deny (none) No requests are denied during prototyping.
+     * @principle Open access for prototyping.
+     */
+    match /teachers/{teacherId} {
+      allow get, list: if true;
+      allow create, update, delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read or write assignment details during the prototyping phase.
+     * @path /assignments/{assignmentId}
+     * @allow (get, list) Any user can read assignment details.
+     * @allow (create, update, delete) Any user can create, update, or delete assignment details.
+     * @deny (none) No requests are denied during prototyping.
+     * @principle Open access for prototyping.
+     */
+    match /assignments/{assignmentId} {
+      allow get, list: if true;
+      allow create, update, delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read or write essays submitted by students during the prototyping phase.
+     * @path /students/{studentId}/essays/{essayId}
+     * @allow (get, list) Any user can read essay data.
+     * @allow (create, update, delete) Any user can create, update, or delete essay data.
+     * @deny (none) No requests are denied during prototyping.
+     * @principle Open access for prototyping.
+     */
+    match /students/{studentId}/essays/{essayId} {
+      allow get, list: if true;
+      allow create, update, delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read or write essays submitted for each assignment during the prototyping phase.
+     * @path /assignments/{assignmentId}/essays/{essayId}
+     * @allow (get, list) Any user can read essay data.
+     * @allow (create, update, delete) Any user can create, update, or delete essay data.
+     * @deny (none) No requests are denied during prototyping.
+     * @principle Open access for prototyping.
+     */
+    match /assignments/{assignmentId}/essays/{essayId} {
+      allow get, list: if true;
+      allow create, update, delete: if true;
+    }
+  }
+}

@@ -1,0 +1,259 @@
+{
+  "entities": {
+    "Essay": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Essay",
+      "type": "object",
+      "description": "Represents a student's essay submission.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the essay submission."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N Essay)"
+        },
+        "assignmentId": {
+          "type": "string",
+          "description": "Reference to Assignment. (Relationship: Assignment 1:N Essay)"
+        },
+        "submissionDate": {
+          "type": "string",
+          "description": "Date and time the essay was submitted.",
+          "format": "date-time"
+        },
+        "text": {
+          "type": "string",
+          "description": "The full text content of the essay."
+        },
+        "ocrText": {
+          "type": "string",
+          "description": "The OCR extracted text from handwritten or scanned essay (if applicable)."
+        },
+        "score": {
+          "type": "number",
+          "description": "The score the student achieved on the essay."
+        },
+        "feedback": {
+          "type": "string",
+          "description": "AI generated feedback for the essay."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "assignmentId",
+        "submissionDate",
+        "text"
+      ]
+    },
+    "Assignment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Assignment",
+      "type": "object",
+      "description": "Represents an assignment that students must complete.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the assignment."
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Reference to Teacher. (Relationship: Teacher 1:N Assignment)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the assignment."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the assignment."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "The date and time the assignment is due.",
+          "format": "date-time"
+        },
+        "maxScore": {
+          "type": "number",
+          "description": "The maximum possible score for the assignment."
+        },
+        "assignmentType": {
+          "type": "string",
+          "description": "Specifies whether the assignment is a Canvas/drawing, Paper-based, or MCQ assignment."
+        }
+      },
+      "required": [
+        "id",
+        "teacherId",
+        "title",
+        "description",
+        "dueDate",
+        "maxScore",
+        "assignmentType"
+      ]
+    },
+    "Student": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Student",
+      "type": "object",
+      "description": "Represents a student user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the student."
+        },
+        "name": {
+          "type": "string",
+          "description": "The student's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The student's email address.",
+          "format": "email"
+        },
+        "gradeLevel": {
+          "type": "number",
+          "description": "The student's grade level."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "gradeLevel"
+      ]
+    },
+    "Teacher": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Teacher",
+      "type": "object",
+      "description": "Represents a teacher user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the teacher."
+        },
+        "name": {
+          "type": "string",
+          "description": "The teacher's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The teacher's email address.",
+          "format": "email"
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject the teacher teaches."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "subject"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/students/{studentId}",
+        "definition": {
+          "entityName": "Student",
+          "schema": {
+            "$ref": "#/backend/entities/Student"
+          },
+          "description": "Stores student profiles. Parameters: studentId.",
+          "params": [
+            {
+              "name": "studentId",
+              "description": "The unique identifier of the student."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/teachers/{teacherId}",
+        "definition": {
+          "entityName": "Teacher",
+          "schema": {
+            "$ref": "#/backend/entities/Teacher"
+          },
+          "description": "Stores teacher profiles. Parameters: teacherId.",
+          "params": [
+            {
+              "name": "teacherId",
+              "description": "The unique identifier of the teacher."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/assignments/{assignmentId}",
+        "definition": {
+          "entityName": "Assignment",
+          "schema": {
+            "$ref": "#/backend/entities/Assignment"
+          },
+          "description": "Stores assignment details. Parameters: assignmentId.",
+          "params": [
+            {
+              "name": "assignmentId",
+              "description": "The unique identifier of the assignment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/students/{studentId}/essays/{essayId}",
+        "definition": {
+          "entityName": "Essay",
+          "schema": {
+            "$ref": "#/backend/entities/Essay"
+          },
+          "description": "Stores essays submitted by students, nested under the student's profile. Includes denormalized 'studentId' and 'assignmentId' for querying. Parameters: studentId, essayId.",
+          "params": [
+            {
+              "name": "studentId",
+              "description": "The unique identifier of the student."
+            },
+            {
+              "name": "essayId",
+              "description": "The unique identifier of the essay."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/assignments/{assignmentId}/essays/{essayId}",
+        "definition": {
+          "entityName": "Essay",
+          "schema": {
+            "$ref": "#/backend/entities/Essay"
+          },
+          "description": "Stores essays submitted for each assignment, nested under the assignment. Includes denormalized 'studentId' and 'assignmentId' for querying. Parameters: assignmentId, essayId.",
+          "params": [
+            {
+              "name": "assignmentId",
+              "description": "The unique identifier of the assignment."
+            },
+            {
+              "name": "essayId",
+              "description": "The unique identifier of the essay."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the INTEMASS Automated Essay Grading System. The structure prioritizes Authorization Independence and QAPs by leveraging denormalization and structural segregation. Given that authentication is not required, all data will be accessible to any user, making granular permission rules unnecessary. However, if authentication is implemented later, the structure is designed to easily incorporate security rules.\n\n1.  **Authorization Independence:**  Since we're operating without authentication, authorization independence isn't strictly enforced through rules. However, the design anticipates future security needs by structuring data in a way that minimizes the need for `get()` calls in security rules. For instance, placing Essays under a Student and Assignment ensures that, with authentication, we could easily control access based on user roles and relationships.\n\n2.  **Structural Segregation:** Collections are separated based on entity type (Students, Teachers, Assignments, Essays) to maintain a homogeneous security posture. This makes it easier to apply consistent rules across all documents within a collection.\n\n3.  **QAPs:** Since authentication isn't required `list` operations won't be restricted. In a future secured implementation, we'd ensure students can only list their own essays and teachers can list assignments they created. The chosen structure supports this by organizing essays under students ( `/students/{studentId}/essays/{essayId}` ). Teachers would have similar restrictions when listing assignments.\n\n4.  **Hierarchical Paths for User-Owned Data:** Essays are stored as subcollections of Students and Assignments ( `/students/{studentId}/essays/{essayId}` and `/assignments/{assignmentId}/essays/{essayId}` ). This facilitates querying essays associated with a specific student or assignment and enables easy management of ownership and access rights if the system is secured in the future.\n\n5. **Invariants:** The structure is designed to maintain data integrity. For example, the `studentId` and `assignmentId` within the `Essay` document act as foreign keys, helping maintain relationships between entities."
+  }
+}
