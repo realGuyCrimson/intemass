@@ -10,56 +10,76 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows anyone to read or write questions during the prototyping phase.
+     * @description Allows anyone to read or write individual questions.
      * @path /questions/{questionId}
      */
     match /questions/{questionId} {
       allow read, write: if true;
     }
+    /**
+     * @description Allows anyone to list all questions.
+     * @path /questions
+     */
     match /questions {
       allow list: if true;
     }
 
     /**
-     * @description Allows anyone to read or write standard answers during the prototyping phase.
+     * @description Allows anyone to read or write individual standard answers.
      * @path /standardAnswers/{standardAnswerId}
      */
     match /standardAnswers/{standardAnswerId} {
       allow read, write: if true;
     }
+    /**
+     * @description Allows anyone to list all standard answers.
+     * @path /standardAnswers
+     */
     match /standardAnswers {
       allow list: if true;
     }
 
     /**
-     * @description Allows anyone to read or write marking schemes during the prototyping phase.
+     * @description Allows anyone to read or write individual marking schemes.
      * @path /markingSchemes/{markingSchemeId}
      */
     match /markingSchemes/{markingSchemeId} {
       allow read, write: if true;
     }
+    /**
+     * @description Allows anyone to list all marking schemes.
+     * @path /markingSchemes
+     */
     match /markingSchemes {
       allow list: if true;
     }
 
     /**
-     * @description Allows anyone to read or write student answers during the prototyping phase.
+     * @description Allows anyone to read or write individual student answers.
      * @path /studentAnswers/{studentAnswerId}
      */
     match /studentAnswers/{studentAnswerId} {
       allow read, write: if true;
     }
+    /**
+     * @description Allows anyone to list all student answers.
+     * @path /studentAnswers
+     */
     match /studentAnswers {
       allow list: if true;
     }
 
     /**
-* @description Allows anyone to read or write grading results during the prototyping phase.
-* @path /gradingResults/{gradingResultId}
-*/
+     * @description Allows anyone to read or write individual grading results.
+     * @path /gradingResults/{gradingResultId}
+     */
     match /gradingResults/{gradingResultId} {
       allow read, write: if true;
     }
+    /**
+     * @description Allows anyone to list all grading results.
+     * @path /gradingResults
+     */
     match /gradingResults {
       allow list: if true;
     }
