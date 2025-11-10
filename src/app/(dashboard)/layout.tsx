@@ -35,14 +35,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { USERS } from '@/lib/users';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/create-question', label: 'Create Question', icon: PlusCircle, role: 'teacher' },
-  { href: '/submit-answer', label: 'Submit Answer', icon: FileQuestion, role: 'student' },
-  { href: '/results', label: 'View Results', icon: View },
-  { href: '/essay-scoring', label: 'Essay Scoring', icon: BookMarked },
-  { href: '/feedback', label: 'AI Feedback', icon: BotMessageSquare },
-  { href: '/diagram-analysis', label: 'Diagram Analysis', icon: ClipboardCheck },
-  { href: '/ocr', label: 'OCR Submission', icon: ScanText },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, role: ['teacher', 'student'] },
+  { href: '/create-question', label: 'Create Question', icon: PlusCircle, role: ['teacher'] },
+  { href: '/submit-answer', label: 'Submit Answer', icon: FileQuestion, role: ['student'] },
+  { href: '/results', label: 'View Results', icon: View, role: ['student'] },
+  { href: '/essay-scoring', label: 'Essay Scoring', icon: BookMarked, role: ['teacher'] },
+  { href: '/feedback', label: 'AI Feedback', icon: BotMessageSquare, role: ['teacher'] },
+  { href: '/diagram-analysis', label: 'Diagram Analysis', icon: ClipboardCheck, role: ['teacher'] },
+  { href: '/ocr', label: 'OCR Submission', icon: ScanText, role: ['teacher'] },
 ];
 
 function UserSwitcher() {
@@ -98,9 +98,31 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user } = useUser();
 
+  // Wait until the user is loaded on the client to prevent hydration mismatch
+  if (!user) {
+      return (
+          <SidebarProvider>
+              <Sidebar>
+                <SidebarHeader>
+                    <div className="flex items-center gap-3 p-2">
+                        <IntomassIcon className="size-7 text-primary" />
+                        <h1 className="font-headline text-xl font-semibold">INTEMASS AI</h1>
+                    </div>
+                </SidebarHeader>
+                <SidebarContent>
+                    {/* Render a skeleton or loading state here */}
+                </SidebarContent>
+              </Sidebar>
+              <SidebarInset>
+                <main className="flex-1 p-4 md:p-6 lg:p-8">{children}</main>
+              </SidebarInset>
+          </SidebarProvider>
+      )
+  }
+
   const filteredNavItems = navItems.filter(item => {
     if (!item.role) return true;
-    return item.role === user?.role;
+    return item.role.includes(user.role);
   });
 
   return (
@@ -166,5 +188,3 @@ export default function DashboardLayout({
     </UserProvider>
   );
 }
-
-    
