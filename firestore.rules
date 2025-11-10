@@ -16,6 +16,9 @@ service cloud.firestore {
     match /questions/{questionId} {
       allow read, write: if true;
     }
+    match /questions {
+      allow list: if true;
+    }
 
     /**
      * @description Allows anyone to read or write standard answers during the prototyping phase.
@@ -23,6 +26,9 @@ service cloud.firestore {
      */
     match /standardAnswers/{standardAnswerId} {
       allow read, write: if true;
+    }
+    match /standardAnswers {
+      allow list: if true;
     }
 
     /**
@@ -32,6 +38,9 @@ service cloud.firestore {
     match /markingSchemes/{markingSchemeId} {
       allow read, write: if true;
     }
+    match /markingSchemes {
+      allow list: if true;
+    }
 
     /**
      * @description Allows anyone to read or write student answers during the prototyping phase.
@@ -40,13 +49,19 @@ service cloud.firestore {
     match /studentAnswers/{studentAnswerId} {
       allow read, write: if true;
     }
+    match /studentAnswers {
+      allow list: if true;
+    }
 
     /**
-     * @description Allows anyone to read or write grading results during the prototyping phase.
-     * @path /gradingResults/{gradingResultId}
-     */
+* @description Allows anyone to read or write grading results during the prototyping phase.
+* @path /gradingResults/{gradingResultId}
+*/
     match /gradingResults/{gradingResultId} {
       allow read, write: if true;
+    }
+    match /gradingResults {
+      allow list: if true;
     }
   }
 }
