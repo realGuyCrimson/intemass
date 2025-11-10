@@ -11,7 +11,7 @@ import {
   orderBy,
   type Firestore,
 } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
+import { useFirestore, useMemoFirebase } from '@/firebase';
 import { PageHeader } from '@/components/page-header';
 import {
   Table,
@@ -119,7 +119,7 @@ export default function ResultsPage() {
 
   const isTeacher = user?.role === 'teacher';
 
-  const studentAnswersQuery = useMemo(() => {
+  const studentAnswersQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     if (isTeacher) {
       return query(
@@ -140,7 +140,7 @@ export default function ResultsPage() {
     isLoading: isLoadingStudentAnswers,
   } = useCollection<StudentAnswer>(studentAnswersQuery);
 
-  const gradingResultsQuery = useMemo(() => {
+  const gradingResultsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     if (isTeacher) {
       return query(
