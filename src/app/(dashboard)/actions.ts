@@ -3,7 +3,7 @@
 import { aiPoweredEssayScoring } from '@/ai/flows/ai-powered-essay-scoring';
 import { automatedFeedbackGeneration } from '@/ai/flows/automated-feedback-generation';
 import { analyzeDiagram } from '@/ai/flows/canvas-diagram-analysis';
-import { ocrFromImage } from '@/ai/flows/ocr-flow';
+import { ocrFromFile } from '@/ai/flows/ocr-flow';
 import {
   diagramSchema,
   essayScoringSchema,
@@ -139,12 +139,12 @@ export async function ocrAction(
   formData: FormData
 ): Promise<OcrState> {
   const validatedFields = ocrSchema.safeParse({
-    imageDataUri: formData.get('imageDataUri'),
+    fileDataUri: formData.get('fileDataUri'),
   });
 
   if (!validatedFields.success) {
     const errors = validatedFields.error.flatten().fieldErrors;
-    const message = errors.imageDataUri?.[0] || 'Invalid input.';
+    const message = errors.fileDataUri?.[0] || 'Invalid input.';
     return {
       status: 'error',
       message,
@@ -152,7 +152,7 @@ export async function ocrAction(
   }
 
   try {
-    const result = await ocrFromImage(validatedFields.data);
+    const result = await ocrFromFile(validatedFields.data);
     return {
       status: 'success',
       message: 'Text extracted successfully.',

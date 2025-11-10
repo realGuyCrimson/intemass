@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { AiPoweredEssayScoringOutput } from '@/ai/flows/ai-powered-essay-scoring';
 import type { AutomatedFeedbackOutput } from '@/ai/flows/automated-feedback-generation';
 import type { AnalyzeDiagramOutput } from '@/ai/flows/canvas-diagram-analysis';
-import type { OcrFromImageOutput } from '@/ai/flows/ocr-flow';
+import type { OcrFromFileOutput } from '@/ai/flows/ocr-flow';
 
 export const essayScoringSchema = z.object({
   essayText: z.string().min(50, 'Essay text must be at least 50 characters.'),
@@ -23,9 +23,9 @@ export const diagramSchema = z.object({
 });
 
 export const ocrSchema = z.object({
-  imageDataUri: z
+  fileDataUri: z
     .string()
-    .startsWith('data:image', 'Invalid image data. Please upload a valid image.'),
+    .startsWith('data:', 'Invalid file data. Please upload a valid file.'),
 });
 
 // Schema for Step 1 of the Create Question form
@@ -67,5 +67,5 @@ export type DiagramState = {
 export type OcrState = {
   status: 'idle' | 'loading' | 'success' | 'error';
   message: string;
-  data?: OcrFromImageOutput;
+  data?: OcrFromFileOutput;
 };

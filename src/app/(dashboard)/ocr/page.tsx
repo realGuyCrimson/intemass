@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from 'react';
 import Image from 'next/image';
-import { Copy, FileUp, LoaderCircle } from 'lucide-react';
+import { Copy, FileUp, LoaderCircle, FileText } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +31,7 @@ export default function OcrPage() {
   const { toast } = useToast();
   
   const [preview, setPreview] = useState<string | null>(null);
+  const [fileType, setFileType] = useState<string | null>(null);
   const [dataUri, setDataUri] = useState<string>('');
   
   const isProcessing = isPending;
@@ -46,7 +47,7 @@ export default function OcrPage() {
     if (state.status === 'success') {
       toast({
         title: 'OCR Complete',
-        description: 'Text has been extracted from the image.',
+        description: 'Text has been extracted from the file.',
       });
     }
   }, [state, toast]);
@@ -54,6 +55,7 @@ export default function OcrPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFileType(file.type);
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
@@ -62,7 +64,7 @@ export default function OcrPage() {
         
         startTransition(() => {
           const formData = new FormData();
-          formData.append('imageDataUri', result);
+          formData.append('fileDataUri', result);
           formAction(formData);
         });
       };
@@ -86,27 +88,27 @@ export default function OcrPage() {
     <>
       <PageHeader
         title="OCR for Handwritten Submissions"
-        description="Upload an image of a handwritten or scanned essay. The system will use Optical Character Recognition (OCR) to extract the text, making it ready for AI analysis."
+        description="Upload an image or PDF of a handwritten or scanned essay. The system will use Optical Character Recognition (OCR) to extract the text, making it ready for AI analysis."
       />
       <form>
-        <input type="hidden" name="imageDataUri" value={dataUri} />
+        <input type="hidden" name="fileDataUri" value={dataUri} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
-              <CardTitle>Upload Essay Image</CardTitle>
+              <CardTitle>Upload Essay File</CardTitle>
               <CardDescription>
-                Select a clear image of a handwritten essay.
+                Select a clear image or a PDF of a handwritten essay.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="ocrFile" className="sr-only">
-                  Essay Image
+                  Essay Image or PDF
                 </Label>
                 <Input
                   id="ocrFile"
                   type="file"
-                  accept="image/*"
+                  accept="image/*,application/pdf"
                   onChange={handleFileChange}
                   disabled={isProcessing}
                 />
@@ -118,16 +120,23 @@ export default function OcrPage() {
                 )}
               >
                 {preview ? (
-                  <Image
-                    src={preview}
-                    alt="Essay preview"
-                    fill
-                    objectFit="contain"
-                  />
+                  fileType?.startsWith('image/') ? (
+                    <Image
+                      src={preview}
+                      alt="Essay preview"
+                      fill
+                      objectFit="contain"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <FileText className="size-10" />
+                        <span>PDF file selected</span>
+                    </div>
+                  )
                 ) : (
                   <div className="flex flex-col items-center gap-2">
                     <FileUp className="size-8" />
-                    <span>Image preview will appear here</span>
+                    <span>File preview will appear here</span>
                   </div>
                 )}
               </div>
@@ -138,14 +147,14 @@ export default function OcrPage() {
             <CardHeader>
               <CardTitle>Extracted Text</CardTitle>
               <CardDescription>
-                The text recognized from the image will be displayed below.
+                The text recognized from the file will be displayed below.
               </CardDescription>
             </CardHeader>
             <CardContent className="relative">
               {isProcessing && (
                 <div className="absolute inset-0 z-10 bg-background/80 flex flex-col items-center justify-center rounded-md">
                   <LoaderCircle className="size-8 animate-spin text-primary mb-4" />
-                  <p className="font-semibold">Processing Image...</p>
+                  <p className="font-semibold">Processing File...</p>
                   <p className="text-sm text-muted-foreground">
                     This may take a moment.
                   </p>
