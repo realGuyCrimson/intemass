@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -33,12 +34,13 @@ import { Button } from '@/components/ui/button';
 import { UserProvider, useUser } from '@/hooks/use-user';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { USERS } from '@/lib/users';
+import { FirebaseClientProvider } from '@/firebase';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, role: ['teacher', 'student'] },
   { href: '/create-question', label: 'Create Question', icon: PlusCircle, role: ['teacher'] },
   { href: '/submit-answer', label: 'Submit Answer', icon: FileQuestion, role: ['student'] },
-  { href: '/results', label: 'View Results', icon: View, role: ['student'] },
+  { href: '/results', label: 'View Results', icon: View, role: ['student', 'teacher'] },
   { href: '/essay-scoring', label: 'Essay Scoring', icon: BookMarked, role: ['teacher'] },
   { href: '/feedback', label: 'AI Feedback', icon: BotMessageSquare, role: ['teacher'] },
   { href: '/diagram-analysis', label: 'Diagram Analysis', icon: ClipboardCheck, role: ['teacher'] },
@@ -184,7 +186,9 @@ export default function DashboardLayout({
 }) {
   return (
     <UserProvider>
-        <AppLayout>{children}</AppLayout>
+        <FirebaseClientProvider>
+            <AppLayout>{children}</AppLayout>
+        </FirebaseClientProvider>
     </UserProvider>
   );
 }
