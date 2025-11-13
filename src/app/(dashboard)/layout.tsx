@@ -171,7 +171,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             {children}
         </main>
         <footer className="p-4 text-center text-sm text-muted-foreground">
-            Powered by Gemini AI
+            Powered by MegaForte Pvt. Ltd. ©2025
         </footer>
       </SidebarInset>
     </SidebarProvider>
