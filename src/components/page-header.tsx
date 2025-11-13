@@ -10,7 +10,7 @@ export function PageHeader({ title, description, className, ...props }: PageHead
   return (
     <div className={cn('space-y-2 mb-8', className)} {...props}>
       <h1 className="font-headline text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
-      {description && <p className="text-lg text-muted-foreground max-w-2xl">{description}</p>}
+      {description && <p className="text-lg text-muted-foreground">{description}</p>}
     </div>
   );
 }

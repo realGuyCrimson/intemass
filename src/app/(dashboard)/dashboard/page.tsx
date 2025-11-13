@@ -92,7 +92,7 @@ export default function DashboardPage() {
          <PageHeader
             title="Automated Essay Grading in 30 Seconds"
             description="INTEMASS AI leverages cutting-edge semantic analysis to provide fast, consistent, and insightful feedback on written work."
-            className="items-center"
+            className="items-center mx-auto"
         />
         <div className="flex justify-center gap-4">
             <Button asChild size="lg">
